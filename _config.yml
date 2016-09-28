@@ -1,0 +1,21 @@
+safe: true
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: "slate"
+      title: ""
+      author: "John Casey"
+
+title: "RWX (Read. Write. Execute.)"
+siteTitle: "Commonjava"
+projectTitle: "RWX"
+tagline: "A Modern XML-RPC Library"
+owner: "John Casey"
+ownerEmail: jdcasey@commonjava.org
+
+gems:
+  - jemoji
+  - kramdown
+
+markdown: kramdown
