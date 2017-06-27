@@ -38,7 +38,7 @@ public class MessageBinder
 
     private FieldBinding currentField;
 
-    private boolean ignore = false;;
+    private boolean ignore = false;
 
     public MessageBinder( final Class<?> type, final ArrayMapping mapping, final XBRBindingContext context )
     {
@@ -55,10 +55,12 @@ public class MessageBinder
     public XmlRpcListener parameter( final int index, final Object value, final ValueType type )
         throws XmlRpcException
     {
+        Logger logger = LoggerFactory.getLogger( getClass() );
+        logger.info( "Parameter: @{}, value: {}, type: {}", index, value, type );
+
         if ( !ignore && currentField == null )
         {
             final FieldBinding binding = getMapping().getFieldBinding( index );
-            Logger logger = LoggerFactory.getLogger( getClass() );
             logger.debug( "SET: {}.{} = {}", getMapping().getObjectType().getName(), binding.getFieldName(), value );
             recipe.setProperty( binding.getFieldName(), value );
         }
