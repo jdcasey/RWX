@@ -15,6 +15,7 @@
  */
 package org.commonjava.rwx.binding.internal.xbr.helper;
 
+import org.commonjava.rwx.binding.internal.xbr.XBRBindingContext;
 import org.commonjava.rwx.binding.spi.Binder;
 import org.commonjava.rwx.binding.spi.BindingContext;
 import org.commonjava.rwx.error.XmlRpcException;
@@ -23,6 +24,10 @@ import org.commonjava.rwx.spi.XmlRpcListener;
 import org.commonjava.rwx.vocab.ValueType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public abstract class AbstractBinder
     extends AbstractXmlRpcListener
@@ -33,7 +38,7 @@ public abstract class AbstractBinder
 
     private Object value;
 
-    private final BindingContext context;
+    private final XBRBindingContext context;
 
     private final Binder parent;
 
@@ -41,11 +46,17 @@ public abstract class AbstractBinder
 
     private ValueType valueType;
 
-    protected AbstractBinder( final Binder parent, final Class<?> type, final BindingContext context )
+    protected AbstractBinder( final Binder parent, final Class<?> type, final XBRBindingContext context )
     {
         this.parent = parent;
         this.context = context;
         this.type = type;
+
+        if ( parent == null )
+        {
+            // this is a top-level binder, and the top-level doesn't have a params event
+            count=1;
+        }
     }
 
     protected final void setValue( final Object value, final ValueType valueType )
@@ -131,7 +142,7 @@ public abstract class AbstractBinder
     protected Binder startArrayInternal()
         throws XmlRpcException
     {
-        return this;
+        return new CollectionBinder( this, List.class, null, context );
     }
 
     @Override
@@ -157,7 +168,7 @@ public abstract class AbstractBinder
     protected Binder startStructInternal()
         throws XmlRpcException
     {
-        return this;
+        return new MapBinder( this, HashMap.class, null, context );
     }
 
     @Override
@@ -190,6 +201,20 @@ public abstract class AbstractBinder
     }
 
     @Override
+    public XmlRpcListener parameter( final int index, final Object value, final ValueType type )
+            throws XmlRpcException
+    {
+        return parameterInternal( index, value, type );
+    }
+
+    protected XmlRpcListener parameterInternal( final int index, final Object value, final ValueType type )
+            throws XmlRpcException
+    {
+        return this;
+    }
+
+
+    @Override
     public XmlRpcListener arrayElement( int i, Object v, ValueType t )
             throws XmlRpcException
     {
@@ -208,7 +233,7 @@ public abstract class AbstractBinder
     private final Binder decrement( final Binder binder )
     {
         Logger logger = LoggerFactory.getLogger( getClass() );
-        logger.trace( "Decrementing count: {} to {} with binder: {}", count, (count-1), binder );
+        logger.trace( "{} DECREMENT nesting count: {} to {} with binder: {}\nFrom: {}.{}", this, count, (count-1), binder, this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[2].getMethodName() );
         count--;
 
         return binder;
@@ -216,9 +241,12 @@ public abstract class AbstractBinder
 
     private final Binder increment( final Binder binder )
     {
-        Logger logger = LoggerFactory.getLogger( getClass() );
-        logger.trace( "Incrementing count: {} to {} with binder: {}\nFrom: {}", count, (count+1), binder, Thread.currentThread().getStackTrace()[2] );
-        count++;
+        if ( this == binder )
+        {
+            Logger logger = LoggerFactory.getLogger( getClass() );
+            logger.trace( "{} INCREMENT nesting count: {} to {} with binder: {}\nFrom: {}.{}", this, count, (count+1), binder, this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[2].getMethodName() );
+            count++;
+        }
         return binder;
     }
 
@@ -227,15 +255,16 @@ public abstract class AbstractBinder
         throws XmlRpcException
     {
         Logger logger = LoggerFactory.getLogger( getClass() );
-        logger.trace( "Got {} value: {}", t, v );
+        logger.trace( "{} Got {} value: {} (nesting count={})", this, t, v, count );
         if ( count < 1 )
         {
+            logger.trace( "{} Passing value back to parent: {}", this, parent );
             parent.value( value, valueType );
             return parent;
         }
         else
         {
-            logger.trace( "Handing off to internal value call." );
+            logger.trace( "{} Handing off to internal value call.", this );
             return valueInternal( v, t );
         }
     }
@@ -243,6 +272,11 @@ public abstract class AbstractBinder
     protected Binder valueInternal( final Object value, final ValueType type )
         throws XmlRpcException
     {
+//        Binder parent = getParent();
+//
+//        Logger logger = LoggerFactory.getLogger( getClass() );
+//        logger.trace( "Got value: {}. Setting on parent, then returning parent: {}", parent );
+//        parent.value( value, type );
         return this;
     }
 

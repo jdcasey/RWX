@@ -176,6 +176,12 @@ public class TrackingXmlRpcListener
         return proceed( () -> current.value( value, type ) );
     }
 
+    @Override
+    public String toString()
+    {
+        return "TrackingXmlRpcListener@" + hashCode() + "{" + "current=" + current + ", last=" + last + ", root=" + root + '}';
+    }
+
     private List<XmlRpcCall> calls = new ArrayList<>();
 
     public static final class XmlRpcCall
@@ -228,24 +234,30 @@ public class TrackingXmlRpcListener
     private XmlRpcListener proceed(RecordingOp<XmlRpcListener> supplier )
             throws XmlRpcException
     {
-        XmlRpcListener next = supplier.execute();
-
         Logger logger = LoggerFactory.getLogger( getClass() );
+        StackTraceElement lastFrame = null;
         if ( logger.isTraceEnabled() )
         {
-            StackTraceElement lastFrame = Thread.currentThread().getStackTrace()[2];
-            logger.trace( "CALLING: {}.{}\n  {} -> {}", lastFrame.getClassName(), lastFrame.getMethodName(), last, current );
+            lastFrame = Thread.currentThread().getStackTrace()[2];
+            logger.trace( "CALLING: {}.{}\n  Last={} ->\n  Current={}", lastFrame.getClassName(), lastFrame.getMethodName(), last,
+                          current );
+        }
 
+        XmlRpcListener next = supplier.execute();
+
+        if ( logger.isTraceEnabled() )
+        {
             calls.add( new XmlRpcCall( lastFrame, last, current, next ) );
 
-            logger.trace( "CALLED: {}.{}\n  {} -> {} -> {}", lastFrame.getClassName(), lastFrame.getMethodName(), last, current,
+            logger.trace( "CALLED: {}.{}\n  Last={} ->\n  Current={} ->\n  Next={}", lastFrame.getClassName(), lastFrame.getMethodName(), last, current,
                           next );
         }
 
-        logger.debug( "{} -> {} -> {}", last, current, next );
+        logger.debug( "Last={} ->\n  Current={} ->\n  Next={}", last, current, next );
         last = current;
         current = next;
 
+        logger.debug( "NEXT: {}", next );
         return next;
     }
 

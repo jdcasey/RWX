@@ -55,6 +55,7 @@ public class ParamHelper
 
                     listener.parameter( count, value, vt );
                     listener.endParameter();
+//                    listener.value( value, vt );
                     logger.trace( "Finished parameter: {}", count );
 
                     count++;

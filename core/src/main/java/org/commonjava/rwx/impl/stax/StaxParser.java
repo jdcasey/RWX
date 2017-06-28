@@ -88,8 +88,10 @@ public class StaxParser
     public void parse( final XmlRpcListener l )
         throws XmlRpcException
     {
-        XmlRpcListener listener = l;
         Logger logger = LoggerFactory.getLogger( getClass() );
+        logger.trace( "Wrapping '{}' for tracing, the proceeding with parse.", l );
+
+        XmlRpcListener listener = l;
         TrackingXmlRpcListener tracker = null;
 //        EventStreamParserImpl estream = null;
 //        if ( logger.isTraceEnabled() )
@@ -107,6 +109,7 @@ public class StaxParser
                 final int tag = reader.next();
                 if ( tag == XMLStreamReader.START_ELEMENT )
                 {
+                    logger.trace( "starting parse with: '{}'", listener );
                     final String tagName = reader.getName().getLocalPart();
                     if ( XmlRpcConstants.REQUEST.equals( tagName ) )
                     {

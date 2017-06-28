@@ -25,6 +25,8 @@ import org.commonjava.rwx.binding.spi.Binder;
 import org.commonjava.rwx.error.XmlRpcException;
 import org.commonjava.rwx.spi.XmlRpcListener;
 import org.commonjava.rwx.vocab.ValueType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.util.HashSet;
@@ -43,9 +45,15 @@ public class MapBinder
 
     private final Set<String> seenKeys = new HashSet<String>();
 
+    private boolean structStarted;
+
     public MapBinder( final Binder parent, final Class<?> mapType, final Field field, final XBRBindingContext context )
     {
         super( parent, getContainsType( field ), context );
+
+        Logger logger = LoggerFactory.getLogger( getClass() );
+        logger.trace( "{} CTOR / START-STRUCT", this );
+
         recipe = new MapRecipe( mapType );
         Converter bv = null;
         if ( field != null )
@@ -59,10 +67,26 @@ public class MapBinder
         this.bindVia = bv;
     }
 
+//    protected Binder startStructInternal()
+//            throws XmlRpcException
+//    {
+//        if ( !structStarted )
+//        {
+//            Logger logger = LoggerFactory.getLogger( getClass() );
+//            logger.trace( "MARKING START-STRUCT" );
+//            structStarted = true;
+//            return this;
+//        }
+//
+//        return super.startStructInternal();
+//    }
+
     @Override
     protected Binder endStructInternal()
         throws XmlRpcException
     {
+        Logger logger = LoggerFactory.getLogger( getClass() );
+        logger.trace( "{} END-STRUCT", this );
         setValue( recipe.create(), ValueType.STRUCT );
         return this;
     }
@@ -71,6 +95,11 @@ public class MapBinder
     protected Binder startStructMemberInternal( final String key )
         throws XmlRpcException
     {
+        Logger logger = LoggerFactory.getLogger( getClass() );
+        logger.trace( "{} START-STRUCT-MEM: {}", this, key );
+
+        currentMember = key;
+
         final Binder binder;
         if ( bindVia != null )
         {
@@ -83,7 +112,6 @@ public class MapBinder
 
         if ( binder != null )
         {
-            currentMember = key;
             return binder;
         }
 
@@ -94,6 +122,8 @@ public class MapBinder
     protected Binder valueInternal( final Object value, final ValueType type )
         throws XmlRpcException
     {
+        Logger logger = LoggerFactory.getLogger( getClass() );
+        logger.trace( "{} VAL: {} = {}", this, currentMember, value );
         if ( currentMember != null && !seenKeys.contains( currentMember ) )
         {
             recipe.put( currentMember, value );
@@ -107,6 +137,8 @@ public class MapBinder
     public XmlRpcListener structMember( final String key, final Object value, final ValueType type )
         throws XmlRpcException
     {
+        Logger logger = LoggerFactory.getLogger( getClass() );
+        logger.trace( "{} STRUCT-MEM-VAL: {} = {}", this, key, value );
         if ( !seenKeys.contains( key ) )
         {
             recipe.put( key, value );
@@ -120,6 +152,8 @@ public class MapBinder
     protected Binder endStructMemberInternal()
         throws XmlRpcException
     {
+        Logger logger = LoggerFactory.getLogger( getClass() );
+        logger.trace( "{} END-STRUCT-MEM: {}", this, currentMember );
         currentMember = null;
         return this;
     }

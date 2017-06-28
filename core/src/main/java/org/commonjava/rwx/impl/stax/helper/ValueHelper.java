@@ -89,14 +89,14 @@ public class ValueHelper
                 }
                 else if ( XmlRpcConstants.STRUCT.equals( tag ) )
                 {
-                    logger.trace( "Handing off to StructHelper at: {}", reader.getLocation() );
+                    logger.trace( "Handing off to StructHelper at:\n{}\nWith listener: {}", reader.getLocation(), listener );
                     value = StructHelper.parse( reader, listener, enableEvents );
                     type = ValueType.STRUCT;
                     valueSet = true;
                 }
                 else if ( XmlRpcConstants.ARRAY.equals( tag ) )
                 {
-                    logger.trace( "Handing off to ArrayHelper at: {}", reader.getLocation() );
+                    logger.trace( "Handing off to ArrayHelper at:\n{}\nWith listener: {}", reader.getLocation(), listener );
                     value = ArrayHelper.parse( reader, listener, enableEvents );
                     type = ValueType.ARRAY;
                     valueSet = true;

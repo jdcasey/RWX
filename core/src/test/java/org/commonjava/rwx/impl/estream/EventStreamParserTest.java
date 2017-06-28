@@ -31,7 +31,7 @@ import org.commonjava.rwx.vocab.EventType;
 import org.commonjava.rwx.vocab.ValueType;
 import org.junit.Test;
 
-
+import java.util.Arrays;
 import java.util.List;
 
 public class EventStreamParserTest
@@ -151,7 +151,7 @@ public class EventStreamParserTest
                                    .with( new ArrayEvent( 0, "foo", ValueType.STRING ) )
                                    .with( new ArrayEvent( EventType.END_ARRAY_ELEMENT ) )
                                    .with( new ArrayEvent( EventType.END_ARRAY ) )
-                                   .with( new StructEvent( "key", new ExtList<String>( "foo" ), ValueType.ARRAY ) )
+                                   .with( new StructEvent( "key", Arrays.asList( "foo" ), ValueType.ARRAY ) )
                                    .with( new StructEvent( EventType.END_STRUCT_MEMBER ) )
                                    .with( new StructEvent( EventType.END_STRUCT ) );
 

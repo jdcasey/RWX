@@ -15,6 +15,7 @@
  */
 package org.commonjava.rwx.binding.spi.value;
 
+import org.commonjava.rwx.binding.internal.xbr.XBRBindingContext;
 import org.commonjava.rwx.binding.internal.xbr.helper.AbstractBinder;
 import org.commonjava.rwx.binding.spi.Binder;
 import org.commonjava.rwx.binding.spi.BindingContext;
@@ -29,7 +30,7 @@ public abstract class CustomValueBinder
     implements ValueBinder
 {
 
-    protected CustomValueBinder( final Binder parent, final Class<?> type, final BindingContext context )
+    protected CustomValueBinder( final Binder parent, final Class<?> type, final XBRBindingContext context )
     {
         super( parent, type, context );
     }

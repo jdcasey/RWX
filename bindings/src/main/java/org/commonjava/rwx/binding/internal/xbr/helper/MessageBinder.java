@@ -121,6 +121,9 @@ public class MessageBinder
     protected Binder endParameterInternal()
         throws XmlRpcException
     {
+        Logger logger = LoggerFactory.getLogger( getClass() );
+        logger.trace( "End parameter: {}", currentField );
+
         currentField = null;
         ignore = false;
         return this;

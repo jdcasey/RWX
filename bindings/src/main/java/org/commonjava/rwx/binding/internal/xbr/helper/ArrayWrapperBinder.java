@@ -18,6 +18,7 @@ package org.commonjava.rwx.binding.internal.xbr.helper;
 import static org.commonjava.rwx.binding.anno.AnnotationUtils.hasAnnotation;
 
 import org.commonjava.rwx.binding.anno.ArrayPart;
+import org.commonjava.rwx.binding.internal.xbr.XBRBindingContext;
 import org.commonjava.rwx.binding.spi.Binder;
 import org.commonjava.rwx.binding.spi.BindingContext;
 import org.commonjava.rwx.error.XmlRpcException;
@@ -31,7 +32,7 @@ public class ArrayWrapperBinder
 
     private Object value;
 
-    public ArrayWrapperBinder( final Binder parent, final Class<?> valueType, final BindingContext context )
+    public ArrayWrapperBinder( final Binder parent, final Class<?> valueType, final XBRBindingContext context )
     {
         super( parent, valueType, context );
     }

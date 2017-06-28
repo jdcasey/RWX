@@ -19,7 +19,8 @@ import org.commonjava.rwx.binding.spi.Bindery;
 import org.commonjava.rwx.error.XmlRpcException;
 import org.commonjava.rwx.spi.XmlRpcGenerator;
 import org.commonjava.rwx.spi.XmlRpcListener;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -43,6 +44,8 @@ public class CompositionBindery
     public <T> T parse( final InputStream in, final Class<T> type )
         throws XmlRpcException
     {
+        Logger logger = LoggerFactory.getLogger( getClass() );
+        logger.trace( "CompositionBindery delegating parse to: {}", parser );
         return parser.parse( in, type );
     }
 

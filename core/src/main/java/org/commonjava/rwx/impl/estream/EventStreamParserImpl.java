@@ -70,6 +70,8 @@ public class EventStreamParserImpl
     {
         if ( delegate != null )
         {
+            Logger logger = LoggerFactory.getLogger( getClass() );
+            logger.trace( "Applying operation to delegate: {}", delegate );
             operation.execute( delegate );
         }
     }

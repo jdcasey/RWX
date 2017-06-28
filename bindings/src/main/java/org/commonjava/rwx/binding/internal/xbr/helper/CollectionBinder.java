@@ -95,12 +95,30 @@ public class CollectionBinder
 
     private void addValue( final int index, final Object value )
     {
-        while ( values.size() <= index )
+        Logger logger = LoggerFactory.getLogger( getClass() );
+        try
         {
-            values.add( null );
-        }
+            if ( values == null )
+            {
+                logger.trace( "{} Setting up values list.", this );
+                values = new ArrayList<>();
+            }
 
-        values.set( index, value );
+            int startSz = values.size();
+            for( int i=startSz; i<=index; i++)
+            {
+                logger.trace( "{} Padding value {} as null", this, i );
+                values.add( null );
+            }
+
+            logger.trace( "{} Setting value at {} (out of {} values) to: {}", this, index, values.size(), value );
+            values.set( index, value );
+        }
+        catch ( RuntimeException r )
+        {
+            logger.error( String.format( "Failed to set array value at: %s to: %s.", index, value ), r );
+            throw r;
+        }
     }
 
     protected List<Object> getValues()
@@ -128,14 +146,46 @@ public class CollectionBinder
     protected Binder startArrayInternal()
         throws XmlRpcException
     {
-        values = new ArrayList<Object>();
-        return this;
+        if ( values == null )
+        {
+            values = new ArrayList<Object>();
+            return this;
+        }
+
+        return super.startArrayInternal();
     }
+
+//    @Override
+//    protected XmlRpcListener parameterInternal( final int index, final Object value, final ValueType type )
+//            throws XmlRpcException
+//    {
+//        return arrayElementInternal( index, value, type );
+//    }
+//
+//    @Override
+//    protected Binder endParameterInternal()
+//            throws XmlRpcException
+//    {
+//        return endArrayElementInternal();
+//    }
+//
+//    @Override
+//    protected Binder startParameterInternal( final int index )
+//            throws XmlRpcException
+//    {
+//        return startArrayElementInternal( index );
+//    }
 
     @Override
     protected Binder startArrayElementInternal( final int index )
         throws XmlRpcException
     {
+        Logger logger = LoggerFactory.getLogger( getClass() );
+        logger.trace( "{} START array element @ {}", this, index );
+
+        logger.trace( "{} SET currentIndex to: {}", this, index );
+        currentIndex = index;
+
         final Binder binder;
         if ( bindVia != null )
         {
@@ -148,7 +198,7 @@ public class CollectionBinder
 
         if ( binder != null )
         {
-            currentIndex = index;
+//            currentIndex = index;
             return binder;
         }
 
@@ -160,7 +210,7 @@ public class CollectionBinder
         throws XmlRpcException
     {
         Logger logger = LoggerFactory.getLogger( getClass() );
-        logger.trace( "\n\n\nARRAY VAL: @{} == {}", currentIndex, value );
+        logger.trace( "\n\n\n{} ARRAY VAL: @{} == {}\n\n", this, currentIndex, value );
         if ( currentIndex > -1 )
         {
             addValue( currentIndex, value );
@@ -173,6 +223,8 @@ public class CollectionBinder
     protected Binder endArrayElementInternal()
         throws XmlRpcException
     {
+        Logger logger = LoggerFactory.getLogger( getClass() );
+        logger.trace( "{} END array element @ {}", this, currentIndex );
         currentIndex = -1;
         return this;
     }

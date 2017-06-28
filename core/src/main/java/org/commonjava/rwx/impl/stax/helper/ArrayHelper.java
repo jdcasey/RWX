@@ -77,6 +77,7 @@ public class ArrayHelper
 
                     if ( enableEvents )
                     {
+                        logger.trace( "Firing arrayElement({}, {}, {}) on {}", count, value, vt, listener );
                         listener.arrayElement( count, value, vt );
                         listener.endArrayElement();
                     }
