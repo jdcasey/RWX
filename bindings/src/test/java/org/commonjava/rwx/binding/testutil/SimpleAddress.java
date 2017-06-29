@@ -95,6 +95,13 @@ public class SimpleAddress
     }
 
     @Override
+    public String toString()
+    {
+        return "SimpleAddress{" + "line1='" + line1 + '\'' + ", line2='" + line2 + '\'' + ", city='" + city + '\''
+                + ", state='" + state + '\'' + ", zip='" + zip + '\'' + '}';
+    }
+
+    @Override
     public int hashCode()
     {
         final int prime = 31;

@@ -136,4 +136,9 @@ public class SimpleAddressMapResponse
         return true;
     }
 
+    @Override
+    public String toString()
+    {
+        return "SimpleAddressMapResponse{" + "addresses=" + addresses + '}';
+    }
 }
