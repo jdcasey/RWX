@@ -27,7 +27,7 @@
   
   <groupId>org.commonjava.rwx</groupId>
   <artifactId>rwx-parent</artifactId>
-  <version>2.2-SNAPSHOT</version>
+  <version>2.2</version>
   
   <packaging>pom</packaging>
   <inceptionYear>2010</inceptionYear>
@@ -59,7 +59,7 @@
       <dependency>
         <groupId>org.commonjava.rwx</groupId>
         <artifactId>rwx</artifactId>
-        <version>2.2-SNAPSHOT</version>
+        <version>2.2</version>
       </dependency>
       <dependency>
         <groupId>org.codehaus.groovy</groupId>
@@ -83,7 +83,7 @@
     <connection>scm:git:https://github.com/Commonjava/RWX.git</connection>
     <developerConnection>scm:git:git@github.com:Commonjava/RWX.git</developerConnection>
     <url>https://github.com/Commonjava/RWX</url>
-    <tag>HEAD</tag>
+    <tag>rwx-parent-2.2</tag>
   </scm>
   
   <dependencies>
