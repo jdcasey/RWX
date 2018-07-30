@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<methodCall>
+  <methodName>krbLogin</methodName>
+  <params>
+    <param>
+      <value>
+        <string>VGhlIHF1aWNrIGJyb3duIGZveCBqdW1wcyBvdmVyIHRoZSBsYXp5IGRvZy4KVGhlIHF1aWNrIGJy
+aWNrIGJyb3duIGZveCBqdW1wcyBvdmVyIHRoZSBsYXp5IGRvZy4=
+</string>
+      </value>
+    </param>
+  </params>
+</methodCall>

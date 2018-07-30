@@ -470,17 +470,22 @@ public class XmlRpcParser
     {
         Object ret = null;
 
+        ValueType vt = ValueType.typeOf( type );
+        StringBuilder sb = null;
+
         int level = 1;
         do
         {
             int event = reader.next();
             if ( event == XMLStreamConstants.CHARACTERS )
             {
-                String text = reader.getText().trim();
+                String text = reader.getText();
                 logger.trace( "Read value: " + text + ", type=" + type );
-
-                ValueType vt = ValueType.typeOf( type );
-                ret = vt.coercion().fromString( text );
+                if ( sb == null )
+                {
+                    sb = new StringBuilder();
+                }
+                sb.append( text );
             }
             else if ( event == XMLStreamConstants.END_ELEMENT )
             {
@@ -490,6 +495,10 @@ public class XmlRpcParser
         }
         while ( level > 0 );
 
+        if ( sb != null )
+        {
+            ret = vt.coercion().fromString( sb.toString() );
+        }
         return ret;
     }
 
