@@ -56,6 +56,16 @@ public class Registry
         return renderer.render( obj );
     }
 
+    public boolean hasRender( Class type )
+    {
+        return rendererMap.get( type ) != null;
+    }
+
+    public boolean hasParser( Class type )
+    {
+        return parserMap.get( type ) != null;
+    }
+
     // singleton instance
 
     private static Registry instance = new Registry(); // default
