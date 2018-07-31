@@ -17,6 +17,7 @@ package org.commonjava.rwx.test.koji;
 
 import org.commonjava.rwx.api.RWXMapper;
 import org.commonjava.rwx.test.AbstractTest;
+import org.commonjava.rwx.test.simple.RequestWithOneParam;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -30,6 +31,26 @@ import static junit.framework.TestCase.assertEquals;
 public class KojiRWXMapperTest
                 extends AbstractTest
 {
+
+    @Test
+    public void roundTrip_KrbLoginRequest() throws Exception
+    {
+        String source = getXMLString( "kojiKrbLoginRequest" );
+        KrbLoginRequest parsed = new RWXMapper().parse( new ByteArrayInputStream( source.getBytes() ),
+                                                        KrbLoginRequest.class );
+
+        KrbLoginRequest expected = new KrbLoginRequest();
+        expected.setKrbRequest( "VGhlIHF1aWNrIGJyb3duIGZveCBqdW1wcyBvdmVyIHRoZSBsYXp5IGRvZy4KVGhlIHF1aWNrIGJy\n"
+                                                + "aWNrIGJyb3duIGZveCBqdW1wcyBvdmVyIHRoZSBsYXp5IGRvZy4=\n" );
+
+        assertEquals( expected.getKrbRequest(), parsed.getKrbRequest() );
+
+        KrbLoginRequest rounded =
+                        new RWXMapper().parse( new ByteArrayInputStream( new RWXMapper().render( parsed ).getBytes() ),
+                                               KrbLoginRequest.class );
+        assertEquals( expected.getKrbRequest(), rounded.getKrbRequest() );
+    }
+
     @Test
     public void roundTrip_GetBuildByNVRObjRequest() throws Exception
     {

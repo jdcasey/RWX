@@ -166,7 +166,7 @@ public enum ValueType
         @Override
         public Object fromString( final String value )
         {
-            return value == null ? null : value.trim();
+            return value == null ? null : value;
         }
     }, String.class, "string" ),
 
